@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose-X ⚠️ | Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
+        body {
+            background: #0a0a0a;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .code {
+            position: absolute;
+            color: #00ff00;
+            font-size: 14px;
+            opacity: 0.7;
+            text-shadow: 0 0 5px #00ff00;
+            animation: fall linear infinite;
+        }
+        
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+        
+        .container {
+            background: rgba(10, 20, 10, 0.9);
+            border: 1px solid #00ff00;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(5px);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #00ff00;
+        }
+        
+        .owner-name {
+            color: #ff0066;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px #ff0066;
+        }
+        
+        .header h1 {
+            color: #00ff00;
+            font-size: 36px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px #00ff00;
+        }
+        
+        .header p {
+            color: #00cc00;
+            font-size: 16px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: rgba(0, 20, 0, 0.6);
+            border: 1px solid #00ff00;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 255, 0, 0.3);
+        }
+        
+        .stat-number {
+            color: #00ff00;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        .stat-label {
+            color: #00cc00;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .generate-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(0, 20, 0, 0.6);
+            border: 1px solid #00ff00;
+            border-radius: 8px;
+        }
+        
+        .generate-section h3 {
+            color: #00ff00;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #00aa00, #00ff00);
+            color: #002200;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 5px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.8);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-copy {
+            background: linear-gradient(to right, #0066aa, #0099ff);
+            color: white;
+            padding: 12px 25px;
+            font-size: 16px;
+            margin-top: 15px;
+        }
+        
+        .generated-password {
+            margin-top: 25px;
+            padding: 25px;
+            background: rgba(0, 30, 0, 0.7);
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .password-display {
+            color: #00ff00;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            word-break: break-all;
+            text-shadow: 0 0 10px #00ff00;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            border: 1px solid #00aa00;
+        }
+        
+        .password-info {
+            color: #00cc00;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .copy-success {
+            color: #00ff00;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+            animation: blink 1s ease;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 255, 0, 0.3);
+            border-left-color: #00ff00;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .success {
+            background: rgba(0, 50, 0, 0.7);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+        
+        .error {
+            background: rgba(50, 0, 0, 0.7);
+            border: 1px solid #ff0000;
+            color: #ff6666;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #00aa00;
+            color: #009900;
+            font-size: 12px;
+        }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body>
+    <div class="matrix-rain" id="matrixRain"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="owner-name">Rose-X ⚠️ Admin Panel</div>
+            <h1>AUTO PASSWORD GENERATOR</h1>
+            <p>SYSTEM AUTO-GENERATES 2-HOUR PASSWORDS</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalPasswords">0</div>
+                <div class="stat-label">Total Generated</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activePasswords">0</div>
+                <div class="stat-label">Active Now</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="usedPasswords">0</div>
+                <div class="stat-label">Used Passwords</div>
+            </div>
+        </div>
+        
+        <div id="message" class="message"></div>
+        
+        <div class="generate-section">
+            <h3>GENERATE 2-HOUR ACCESS PASSWORD</h3>
+            <p style="color: #00cc00; margin-bottom: 20px;">Click below to auto-generate a random 2-hour password</p>
+            
+            <div class="loading" id="generateLoading">
+                <div class="spinner"></div>
+                <p style="color: #00ff00; margin-top: 10px;">GENERATING SECURE PASSWORD...</p>
+            </div>
+            
+            <button class="btn" onclick="generatePassword()" id="generateBtn">GENERATE PASSWORD</button>
+            
+            <div class="generated-password" id="generatedPassword">
+                <div class="password-info">✅ NEW PASSWORD GENERATED SUCCESSFULLY</div>
+                <div class="password-display" id="passwordDisplay"></div>
+                <div class="password-info">⏰ VALID FOR: <strong>2 HOURS</strong></div>
+                <div class="password-info">🕐 AUTO-EXPIRES: <strong id="expiryTime"></strong></div>
+                <div class="password-info">📱 SINGLE DEVICE USE ONLY</div>
+                
+                <button class="btn btn-copy" onclick="copyPassword()" id="copyBtn">
+                    📋 COPY PASSWORD
+                </button>
+                <div class="copy-success" id="copySuccess">✅ Password copied to clipboard!</div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Rose-X ⚠️ Security System | Auto Password Generator v2.0</p>
+            <p>All passwords auto-expire after 2 hours | Single device authentication</p>
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            databaseURL: "https://cyber-info-finder-default-rtdb.firebaseio.com/"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        // Create matrix rain effect
+        function createMatrixRain() {
+            const characters = '01010101010101010101010101010101ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&';
+            const fontSize = 14;
+            const columns = Math.floor(window.innerWidth / fontSize);
+            const matrixRain = document.getElementById('matrixRain');
+            
+            for (let i = 0; i < columns; i++) {
+                const code = document.createElement('div');
+                code.className = 'code';
+                code.style.left = (i * fontSize) + 'px';
+                code.style.animationDuration = (Math.random() * 5 + 3) + 's';
+                code.style.animationDelay = (Math.random() * 5) + 's';
+                code.textContent = characters.charAt(Math.floor(Math.random() * characters.length));
+                matrixRain.appendChild(code);
+            }
+        }
+        
+        // Generate random password
+        function generateRandomPassword() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+            let password = '';
+            for (let i = 0; i < 12; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return password;
+        }
+        
+        // Show message
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 4000);
+        }
+        
+        // Copy password to clipboard
+        function copyPassword() {
+            const passwordDisplay = document.getElementById('passwordDisplay');
+            const copySuccess = document.getElementById('copySuccess');
+            const copyBtn = document.getElementById('copyBtn');
+            
+            const passwordText = passwordDisplay.textContent;
+            
+            // Create temporary textarea for copying
+            const textarea = document.createElement('textarea');
+            textarea.value = passwordText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // For mobile devices
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    copySuccess.style.display = 'block';
+                    copyBtn.textContent = '✅ COPIED!';
+                    copyBtn.style.background = 'linear-gradient(to right, #00aa00, #00ff00)';
+                    
+                    setTimeout(() => {
+                        copySuccess.style.display = 'none';
+                        copyBtn.textContent = '📋 COPY PASSWORD';
+                        copyBtn.style.background = 'linear-gradient(to right, #0066aa, #0099ff)';
+                    }, 2000);
+                }
+            } catch (err) {
+                showMessage('ERROR: Failed to copy password', 'error');
+            }
+            
+            document.body.removeChild(textarea);
+        }
+        
+        // Generate new password
+        function generatePassword() {
+            const generateBtn = document.getElementById('generateBtn');
+            const generateLoading = document.getElementById('generateLoading');
+            const generatedPassword = document.getElementById('generatedPassword');
+            const passwordDisplay = document.getElementById('passwordDisplay');
+            const expiryTime = document.getElementById('expiryTime');
+            
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'GENERATING...';
+            generateLoading.style.display = 'block';
+            generatedPassword.style.display = 'none';
+            
+            // Generate random password
+            const passwordCode = generateRandomPassword();
+            const duration = 120; // 2 hours in minutes
+            const createdAt = Date.now();
+            const expiresAt = createdAt + (duration * 60 * 1000);
+            
+            const passwordData = {
+                code: passwordCode,
+                duration: duration,
+                createdAt: createdAt,
+                expiresAt: expiresAt,
+                isActive: true,
+                isUsed: false,
+                usedBy: null,
+                usedAt: null
+            };
+            
+            // Save password to Firebase
+            database.ref('passwords/' + passwordCode).set(passwordData)
+                .then(() => {
+                    generateLoading.style.display = 'none';
+                    generatedPassword.style.display = 'block';
+                    passwordDisplay.textContent = passwordCode;
+                    
+                    // Calculate expiry time
+                    const expiryDate = new Date(expiresAt);
+                    const options = { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric',
+                        hour: '2-digit', 
+                        minute: '2-digit',
+                        second: '2-digit'
+                    };
+                    expiryTime.textContent = expiryDate.toLocaleString('en-US', options);
+                    
+                    showMessage('✅ SUCCESS: 2-HOUR PASSWORD GENERATED', 'success');
+                    updateStats();
+                    
+                    // Re-enable button after 1 second
+                    setTimeout(() => {
+                        generateBtn.disabled = false;
+                        generateBtn.textContent = 'GENERATE PASSWORD';
+                    }, 1000);
+                })
+                .catch((error) => {
+                    generateLoading.style.display = 'none';
+                    generateBtn.disabled = false;
+                    generateBtn.textContent = 'GENERATE PASSWORD';
+                    showMessage('❌ ERROR: FAILED TO GENERATE PASSWORD', 'error');
+                });
+        }
+        
+        // Update statistics
+        function updateStats() {
+            database.ref('passwords').once('value')
+                .then((snapshot) => {
+                    let total = 0;
+                    let active = 0;
+                    let used = 0;
+                    const now = Date.now();
+                    
+                    snapshot.forEach((childSnapshot) => {
+                        const password = childSnapshot.val();
+                        total++;
+                        
+                        // Check if password is active and not expired
+                        if (password.isActive && now < password.expiresAt) {
+                            active++;
+                        }
+                        
+                        if (password.isUsed) {
+                            used++;
+                        }
+                    });
+                    
+                    document.getElementById('totalPasswords').textContent = total;
+                    document.getElementById('activePasswords').textContent = active;
+                    document.getElementById('usedPasswords').textContent = used;
+                    
+                    // Auto-clean expired passwords
+                    cleanupExpiredPasswords();
+                });
+        }
+        
+        // Cleanup expired passwords
+        function cleanupExpiredPasswords() {
+            const now = Date.now();
+            database.ref('passwords').once('value')
+                .then((snapshot) => {
+                    const updates = {};
+                    snapshot.forEach((childSnapshot) => {
+                        const password = childSnapshot.val();
+                        if (now > password.expiresAt) {
+                            updates[childSnapshot.key + '/isActive'] = false;
+                        }
+                    });
+                    if (Object.keys(updates).length > 0) {
+                        database.ref('passwords').update(updates);
+                    }
+                });
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            createMatrixRain();
+            updateStats();
+            
+            // Auto-refresh stats every 10 seconds
+            setInterval(updateStats, 10000);
+        });
+    </script>
+</body>
+</html>
